@@ -1,0 +1,26 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  contracts:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: 语法编译检查
+        run: python -m compileall -q tool phone termux tests
+
+      - name: 契约测试（曲库/深链/M0 样本/文档链接）
+        run: python -m unittest discover -s tests -v
+
+      - name: κ 与 α 计算自检
+        run: python tool/kappa.py --selftest

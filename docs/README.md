@@ -28,6 +28,7 @@
 | [knowledge-base.md](knowledge-base.md) | **知识库架构**：三层仓（公共/团队/个人）、五类知识对象、冷启动规模、贡献审核流水线、agent 四工具检索与证据链回答、数据质量与演化 | 做数据、做检索、做审核时 |
 | [scene-lifecycle.md](scene-lifecycle.md) | **场景 × 生命周期**：分场景 / 场前编排 / 临场使用三段的目标、界面、数据、指标与硬约束 | 设计功能、拆分版本时 |
 | [product-form.md](product-form.md) | **落地形态**：六种形态评分（H5/小程序/App/桌面台/Skill/硬件）、四阶段路径、三层矩阵、变现假设 | 定版本节奏、谈资源与商业化时 |
+| [m0-annotation-kit.md](m0-annotation-kit.md) | **M0 标注套件**：50 首样本清单、标注表结构、双盲流程、κ/α 命令与门槛、常见坑 | 启动 M0 验证时（当前下一步） |
 | [mobile-agent-dev-plan.md](mobile-agent-dev-plan.md) | 基于 Mobile Agent 二次开发方案：三姿态、KugouProvider 四工具、M-B1~B4 | 做 M-B2 原生开发时 |
 
 ## 调研与决策依据（历史链，不删除）
