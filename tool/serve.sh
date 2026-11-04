@@ -8,7 +8,7 @@
 set -eu
 
 DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-PY="${PYTHON:-/home/bird/.workbuddy/binaries/python/versions/3.13.12/bin/python3}"
+PY="${PYTHON:-python3}"
 PORT="${PORT:-8801}"
 LOG="${LOG:-/tmp/kgjp_web.log}"
 

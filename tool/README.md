@@ -12,8 +12,8 @@
 {
   "mcpServers": {
     "kgjp": {
-      "command": "/home/bird/.workbuddy/binaries/python/versions/3.13.12/bin/python3",
-      "args": ["/home/bird/work/kgJP/tool/server.py"]
+      "command": "python3",
+      "args": ["server.py"]
     }
   }
 }
@@ -122,11 +122,11 @@ BGM 场景 `require_instrument: true`，有人声的歌直接出局，不参与�
 ## 本地自测
 
 ```bash
-cd /home/bird/work/kgJP/tool
+cd tool
 printf '%s\n' \
 '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{}}' \
 '{"jsonrpc":"2.0","id":2,"method":"tools/call","params":{"name":"recommend_music","arguments":{"scene":"focus","brief":"改了三版还没过"}}}' \
-| /home/bird/.workbuddy/binaries/python/versions/3.13.12/bin/python3 server.py
+| python3 server.py
 ```
 
 ---

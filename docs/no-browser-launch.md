@@ -49,7 +49,7 @@ adb shell monkey -p com.kugou.android -c android.intent.category.LAUNCHER 1
 ### 实测状态（2026-11-03）
 
 - `adb devices` → **空**
-- `adb connect 192.168.238.14:5555` → **Connection refused**
+- `adb connect 192.168.x.x:5555` → **Connection refused**
 - `adb mdns services` → **无发现**
 
 **说明你手机目前没开 USB 调试 / 无线调试**。这是预期行为 —— 安卓默认关闭，需要手动开。
@@ -74,7 +74,7 @@ adb shell monkey -p com.kugou.android -c android.intent.category.LAUNCHER 1
    ```
 4. 之后 `adb devices` 应该能看到设备
 
-⚠️ **同一 Wi-Fi 下才行**。你手机连的 Wi-Fi 和这台沙箱所在网络（192.168.238.x）要互通。
+⚠️ **同一 Wi-Fi 下才行**。你手机连的 Wi-Fi 和这台沙箱所在网络（192.168.x.x）要互通。
 
 **方案 C：你自己在手机上执行，不需要打通**
 - 手机装 Termux（F-Droid 版），把命令贴进去跑。和 Agent 无关，但最快验证协议是否可用。
@@ -100,7 +100,7 @@ adb shell monkey -p com.kugou.android -c android.intent.category.LAUNCHER 1
 | `xdg-open kugou://...` | 工具存在但无桌面环境，不会真的唤起 |
 | `open kugou://...` | 这是 Linux，`open` 是 macOS 命令，不适用 |
 | `adb devices` | 空，无设备 |
-| `adb connect 192.168.238.14:5555` | Connection refused |
+| `adb connect 192.168.x.x:5555` | Connection refused |
 | `adb mdns services` | 无发现 |
 
 **结论**：通道当前是断的。不是协议问题，是你手机没开调试、也没连到沙箱。

@@ -99,7 +99,7 @@ curl "http://mobilecdn.kugou.com/api/v3/search/song?format=json&keyword=<URL编�
 
 ## 选曲辅助（可选）
 
-若 agent 需要根据场景推荐歌曲，本项目已内置 9 首曲库 + 5 场景（focus/tired/restless/nostalgia/bgm），见 `/home/bird/work/kgJP/tool/library.py`，含打分与去重逻辑（`kugou.py` 的 `pick`）。手机版可复制这两个文件随 skill 携带。
+若 agent 需要根据场景推荐歌曲，本项目已内置 9 首曲库 + 5 场景（focus/tired/restless/nostalgia/bgm），见 `tool/library.py`，含打分与去重逻辑（`kugou.py` 的 `pick`）。手机版可复制这两个文件随 skill 携带。
 
 ## 快速自检
 
