@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0f1115">
+<title>kgJP MVP</title>
+<style>
+  :root{
+    --bg:#0b0d11; --card:#16191f; --card2:#1d212a; --line:#272c36;
+    --fg:#eceef2; --dim:#8b929e; --dim2:#5d646f;
+    --accent:#4ade80; --accent-bg:#12291c; --accent-line:#2a6641;
+    --warn:#fbbf24; --err:#f87171;
+    --safe:env(safe-area-inset-bottom,0px);
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;background:var(--bg);color:var(--fg)}
+  body{
+    font:15px/1.55 -apple-system,BlinkMacSystemFont,"PingFang SC","Noto Sans CJK SC","Microsoft YaHei",sans-serif;
+    padding:18px 15px calc(24px + var(--safe));
+    max-width:600px;margin:0 auto;
+    -webkit-text-size-adjust:100%;
+  }
+
+  /* ── 顶部 ── */
+  .top{display:flex;align-items:baseline;gap:8px;margin-bottom:3px}
+  .logo{font-size:17px;font-weight:700;letter-spacing:.4px}
+  .ver{font:600 9px/1 ui-monospace,monospace;color:var(--dim2);
+       border:1px solid var(--line);padding:3px 5px;border-radius:4px}
+  .tagline{color:var(--dim);font-size:12.5px;margin-bottom:16px}
+
+  /* ── 场景选择 ── */
+  .label{font-size:11px;color:var(--dim2);letter-spacing:.6px;
+         margin:0 0 8px;text-transform:uppercase;font-weight:600}
+  .scenes{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:18px}
+  .scene{
+    padding:8px 13px;border-radius:20px;background:var(--card);
+    border:1px solid var(--line);color:var(--dim);
+    font-size:13px;cursor:pointer;transition:.15s;user-select:none;
+  }
+  .scene:active{transform:scale(.96)}
+  .scene.on{
+    background:var(--accent-bg);border-color:var(--accent-line);
+    color:var(--accent);font-weight:600;
+  }
+
+  /* ── 结果 ── */
+  .result{min-height:120px}
+  .empty{
+    border:1px dashed var(--line);border-radius:12px;padding:26px 18px;
+    text-align:center;color:var(--dim2);font-size:13px;line-height:1.7;
+  }
+
+  .card{
+    background:var(--card);border:1px solid var(--line);border-radius:14px;
+    padding:15px;margin-bottom:11px;animation:in .22s ease-out;
+  }
+  @keyframes in{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+  .reason{
+    font-size:13px;color:var(--warn);line-height:1.55;margin-bottom:11px;
+    padding-left:10px;border-left:2px solid #4a3a15;
+  }
+  .song-row{display:flex;align-items:center;gap:11px;margin-bottom:12px}
+  .cover{
+    width:46px;height:46px;border-radius:8px;flex:none;
+    background:linear-gradient(135deg,#2a3140,#1a1e26);
+    display:flex;align-items:center;justify-content:center;
+    font-size:20px;color:#3f4756;
+  }
+  .meta{min-width:0;flex:1}
+  .sname{font-size:15px;font-weight:600;white-space:nowrap;
+         overflow:hidden;text-overflow:ellipsis}
+  .sartist{font-size:12.5px;color:var(--dim);margin-top:1px}
+  .salbum{font-size:11px;color:var(--dim2);margin-top:1px;
+          white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+  .btns{display:flex;gap:8px}
+  .btn{
+    flex:1;padding:11px;border-radius:9px;text-align:center;
+    text-decoration:none;font-size:13.5px;font-weight:600;
+    border:1px solid var(--line);background:var(--card2);color:var(--fg);
+    display:flex;align-items:center;justify-content:center;gap:5px;
+    transition:.15s;
+  }
+  .btn:active{transform:scale(.975)}
+  .btn.play{background:var(--accent-bg);border-color:var(--accent-line);color:var(--accent)}
+  .btn.play:active{background:#0e2115}
+  .btn.web{flex:0 0 auto;padding:11px 14px;color:var(--dim)}
+  .no-id{font-size:10.5px;color:var(--err);margin-top:7px;text-align:right}
+
+  /* ── 日志面板 ── */
+  .logbox{
+    margin-top:20px;background:#0a0c10;border:1px solid var(--line);
+    border-radius:10px;padding:11px 12px;
+    font:11px/1.7 ui-monospace,Menlo,monospace;color:var(--dim2);
+    max-height:180px;overflow-y:auto;white-space:pre-wrap;word-break:break-all;
+    display:none;
+  }
+  .logbox.show{display:block}
+  .logbox .ok{color:var(--accent)}
+  .logbox .err{color:var(--err)}
+  .logbox .hl{color:#7dd3fc}
+
+  .foot{margin-top:16px;display:flex;gap:8px}
+  .mini{
+    flex:1;padding:9px;border-radius:8px;background:transparent;
+    border:1px solid var(--line);color:var(--dim2);
+    font-size:11.5px;cursor:pointer;font-family:inherit;
+  }
+  .mini:active{background:var(--card)}
+</style>
+</head>
+<body>
+
+<div class="top">
+  <span class="logo">kgJP</span>
+  <span class="ver">MVP</span>
+</div>
+<div class="tagline">说个场景，给你一首对味的，点开就在酷狗里听</div>
+
+<p class="label">现在什么状态</p>
+<div class="scenes" id="scenes"></div>
+
+<p class="label">推荐</p>
+<div class="result" id="result">
+  <div class="empty">选一个上面的场景</div>
+</div>
+
+<div class="foot">
+  <button class="mini" id="toggle-log">显示诊断日志</button>
+  <button class="mini" id="retry-all">全部测一遍</button>
+</div>
+
+<div class="logbox" id="logbox"></div>
+
+<script>
+/* ══════════════════════════════════════════════
+   kgJP MVP — 单文件，无依赖，离线可用
+   ══════════════════════════════════════════════ */
+
+const PKG = "com.kugou.android";
+
+/* ── 曲库 ─────────────────────────────────────────────────
+   每条必须有 hash（深链必需）。
+   mixsong 有则优先用单曲页，没有则退回搜索页。
+   reason 必须具体，不能写"很适合你"这种空话。
+   ───────────────────────────────────────────────────────── */
+const LIBRARY = {
+  focus: [
+    {
+      title: "潮汐 (Natural)", artist: "傅梦彤", album: "潮汐",
+      hash: "a4713521e4754b8ed3f09af1e41756e5",
+      mixsong: "4ltgkqde", duration: 168, verified: true,
+      reason: "这首已验证可用。节奏稳、没有强人声副歌抢注意力，适合连着写东西时当背景。"
+    }
+  ],
+  tired: [],
+  restless: [],
+  nostalgia: [],
+  bgm: []
+};
+
+const SCENES = [
+  {id:"focus",     label:"写代码 / 专注"},
+  {id:"tired",     label:"深夜疲惫"},
+  {id:"restless",  label:"心烦"},
+  {id:"nostalgia", label:"有点怀旧"},
+  {id:"bgm",       label:"找 BGM"}
+];
+
+/* ── 深链构造 ─────────────────────────────────────────────── */
+
+function playScheme(song){
+  // L2: 分享回流协议，cmd 212 = 播放指定音频
+  const payload = {
+    cmd: 212,
+    jsonStr: { hash: song.hash, filename: song.artist + " - " + song.title, extname: "mp3" }
+  };
+  return "kugou://start.weixin?" + encodeURIComponent(JSON.stringify(payload));
+}
+
+function appIntent(song){
+  // L3: intent + 未安装时跳网页
+  const fb = encodeURIComponent(webUrl(song));
+  return "intent://play?hash=" + song.hash +
+         "#Intent;scheme=kugou;package=" + PKG +
+         ";S.browser_fallback_url=" + fb + ";end";
+}
+
+function webUrl(song){
+  if (song.mixsong) return "https://www.kugou.com/mixsong/" + song.mixsong + ".html";
+  return "https://www.kugou.com/yy/html/search.html#searchKeyWord=" +
+         encodeURIComponent(song.artist + " " + song.title);
+}
+
+/* ── 日志 ─────────────────────────────────────────────────── */
+
+const logEl = document.getElementById("logbox");
+function log(msg, cls){
+  const t = new Date().toTimeString().slice(0,8);
+  const line = document.createElement("div");
+  if (cls) line.className = cls;
+  line.textContent = "[" + t + "] " + msg;
+  logEl.appendChild(line);
+  logEl.scrollTop = logEl.scrollHeight;
+  console.log(msg);
+}
+
+function logSong(song){
+  log("── " + song.artist + " - " + song.title, "hl");
+  log("hash  " + song.hash);
+  log("时长  " + fmt(song.duration));
+  log("play  " + playScheme(song).slice(0, 76) + "…");
+  log("intent " + appIntent(song).slice(0, 76) + "…");
+  log("web   " + webUrl(song));
+}
+
+function fmt(s){
+  if (!s) return "?";
+  return Math.floor(s/60) + ":" + String(s%60).padStart(2,"0");
+}
+
+/* ── 渲染 ─────────────────────────────────────────────────── */
+
+const scenesEl = document.getElementById("scenes");
+const resultEl = document.getElementById("result");
+
+SCENES.forEach(s => {
+  const b = document.createElement("div");
+  b.className = "scene";
+  b.dataset.id = s.id;
+  b.textContent = s.label;
+  b.onclick = () => select(s.id, b);
+  scenesEl.appendChild(b);
+});
+
+function select(id, el){
+  [...scenesEl.children].forEach(c => c.classList.toggle("on", c === el));
+  const list = LIBRARY[id] || [];
+  log("选中场景: " + id + " → " + list.length + " 首");
+
+  if (!list.length){
+    resultEl.innerHTML =
+      '<div class="empty">这个场景还没配歌。<br>' +
+      'MVP 阶段只填了「写代码 / 专注」的曲库，' +
+      '用来验证跳转链路是否通。</div>';
+    log("该场景曲库为空", "err");
+    return;
+  }
+  resultEl.innerHTML = "";
+  list.forEach(song => resultEl.appendChild(card(song)));
+}
+
+function card(song){
+  const d = document.createElement("div");
+  d.className = "card";
+
+  const r = document.createElement("div");
+  r.className = "reason";
+  r.textContent = song.reason;
+  d.appendChild(r);
+
+  const row = document.createElement("div");
+  row.className = "song-row";
+  row.innerHTML =
+    '<div class="cover">♪</div>' +
+    '<div class="meta">' +
+      '<div class="sname"></div>' +
+      '<div class="sartist"></div>' +
+      '<div class="salbum"></div>' +
+    '</div>';
+  row.querySelector(".sname").textContent = song.title;
+  row.querySelector(".sartist").textContent = song.artist + " · " + fmt(song.duration);
+  row.querySelector(".salbum").textContent = song.album || "";
+  d.appendChild(row);
+
+  const btns = document.createElement("div");
+  btns.className = "btns";
+
+  const a = document.createElement("a");
+  a.className = "btn play";
+  a.href = playScheme(song);
+  a.textContent = "▶ 在酷狗播放";
+  a.onclick = () => log("点击 play → " + song.title);
+  btns.appendChild(a);
+
+  const w = document.createElement("a");
+  w.className = "btn web";
+  w.href = webUrl(song);
+  w.target = "_blank";
+  w.rel = "noopener";
+  w.textContent = "网页";
+  w.onclick = () => log("点击 web → " + webUrl(song));
+  btns.appendChild(w);
+
+  d.appendChild(btns);
+
+  if (!song.verified){
+    const n = document.createElement("div");
+    n.className = "no-id";
+    n.textContent = "此曲未在真机验证过唤起";
+    d.appendChild(n);
+  }
+  return d;
+}
+
+/* ── 诊断 ─────────────────────────────────────────────────── */
+
+document.getElementById("toggle-log").onclick = () => {
+  logEl.classList.toggle("show");
+  document.getElementById("toggle-log").textContent =
+    logEl.classList.contains("show") ? "隐藏诊断日志" : "显示诊断日志";
+};
+
+document.getElementById("retry-all").onclick = () => {
+  log("=== 环境诊断 ===", "hl");
+  log("UA: " + navigator.userAgent);
+  log("可见性: " + document.visibilityState);
+  log("曲库总量: " +
+      Object.values(LIBRARY).reduce((n,a) => n + a.length, 0) + " 首");
+  log("");
+  log("=== 逐曲链接 ===","hl");
+  Object.entries(LIBRARY).forEach(([k, arr]) =>
+    arr.forEach(s => { log("[场景 " + k + "]"); logSong(s); }));
+  log("");
+  log("=== 手动验证清单 ===","hl");
+  log("1. 点「在酷狗播放」→ 应弹出酷狗并进入播放页");
+  log("2. 若停在酷狗首页 → 协议只做了打开，未解析参数");
+  log("3. 若无反应 → 查是否装了酷狗，或 scheme 被拦");
+  log("4. 点「网页」→ 应看到酷狗网页版单曲页");
+  log("请把这里的内容截图发回");
+  logEl.classList.add("show");
+};
+
+/* 启动 */
+if (location.protocol === "file:"){
+  log("以本地文件方式打开（file://）", "ok");
+  log("注意：部分浏览器会拦截本地文件的 scheme 跳转");
+  log("若点了没反应，改用 Chrome 或系统浏览器打开本页");
+  log("");
+}
+log("kgJP MVP 已加载", "ok");
+log("曲库: " + Object.values(LIBRARY).reduce((n,a)=>n+a.length,0) + " 首（仅 focus 有内容）");
+log("点「全部测一遍」查看完整诊断");
+</script>
+</body>
+</html>

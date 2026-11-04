@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>kgJP · 安卓唤起测试</title>
+<style>
+  :root{
+    --bg:#0f1115; --card:#181b22; --line:#2a2f3a;
+    --fg:#e8eaed; --dim:#9aa0ab; --accent:#22c55e;
+    --warn:#f59e0b; --danger:#ef4444;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  body{
+    margin:0;padding:20px 16px 60px;background:var(--bg);color:var(--fg);
+    font:15px/1.6 -apple-system,BlinkMacSystemFont,"PingFang SC","Noto Sans CJK SC",sans-serif;
+    max-width:640px;margin:0 auto;
+  }
+  h1{font-size:19px;margin:0 0 4px;font-weight:600;letter-spacing:.3px}
+  .sub{color:var(--dim);font-size:13px;margin-bottom:22px}
+  .song{
+    background:var(--card);border:1px solid var(--line);border-radius:12px;
+    padding:16px;margin-bottom:22px;
+  }
+  .song-name{font-size:17px;font-weight:600}
+  .song-meta{color:var(--dim);font-size:13px;margin-top:2px}
+  .ids{margin-top:12px;padding-top:12px;border-top:1px dashed var(--line);
+       font:11px/1.8 ui-monospace,Menlo,monospace;color:var(--dim);word-break:break-all}
+  .ids b{color:#6b7280;font-weight:400;display:inline-block;min-width:106px}
+
+  .item{margin-bottom:14px}
+  .hd{display:flex;align-items:center;gap:8px;margin-bottom:7px}
+  .tag{
+    font:600 10px/1 ui-monospace,monospace;padding:4px 6px;border-radius:4px;
+    background:#243043;color:#7dd3fc;letter-spacing:.5px;flex:none;
+  }
+  .tag.hot{background:#3f2a1a;color:var(--warn)}
+  .tag.safe{background:#1a3025;color:var(--accent)}
+  .name{font-weight:600;font-size:14px}
+  .note{color:var(--dim);font-size:12px;margin-bottom:8px}
+  a.btn{
+    display:block;text-align:center;padding:13px;border-radius:10px;
+    background:var(--card);border:1px solid var(--line);color:var(--fg);
+    text-decoration:none;font-weight:600;font-size:14px;transition:.15s;
+  }
+  a.btn:active{transform:scale(.985);background:#22262f}
+  a.btn.primary{background:#1a3a28;border-color:#2d6b45;color:#86efac}
+  a.btn.primary:active{background:#15301f}
+  .url{
+    margin-top:6px;font:10px/1.5 ui-monospace,monospace;color:#4b5563;
+    word-break:break-all;max-height:44px;overflow:hidden;
+  }
+  details.log{margin-top:26px;background:var(--card);border:1px solid var(--line);
+              border-radius:10px;padding:14px}
+  summary{cursor:pointer;font-weight:600;font-size:14px;color:var(--dim)}
+  .log p{font-size:12px;color:var(--dim);margin:10px 0 6px}
+  .log code{background:#0a0c10;padding:1px 4px;border-radius:3px;font-size:11px}
+  hr{border:0;border-top:1px solid var(--line);margin:22px 0}
+</style>
+</head>
+<body>
+
+<h1>在酷狗里播放这首歌</h1>
+<div class="sub">kgJP 深链测试页 · 请用安卓手机打开</div>
+
+<div class="song">
+  <div class="song-name">潮汐 (Natural)</div>
+  <div class="song-meta">傅梦彤 · 02:48</div>
+  <div class="ids">
+    <b>hash</b>a4713521e4754b8ed3f09af1e41756e5<br>
+    <b>songid</b>84785711<br>
+    <b>album_audio_id</b>278511146<br>
+    <b>album_id</b>39769270<br>
+    <b>mixsong_id</b>4ltgkqde
+  </div>
+</div>
+
+<div class="item">
+  <div class="hd"><span class="tag hot">L2</span><span class="name">直接跳播放页</span></div>
+  <div class="note">走酷狗分享回流协议，理论上打开即播。最值得先试。</div>
+  <a class="btn primary" id="b-l2" href="#">在酷狗中播放</a>
+  <div class="url" id="u-l2"></div>
+</div>
+
+<div class="item">
+  <div class="hd"><span class="tag">L3a</span><span class="name">唤起 App（带网页兜底）</span></div>
+  <div class="note">没装酷狗时自动跳网页版，不会卡死。</div>
+  <a class="btn" id="b-l3a" href="#">打开酷狗</a>
+  <div class="url" id="u-l3a"></div>
+</div>
+
+<div class="item">
+  <div class="hd"><span class="tag safe">L3b</span><span class="name">只打开酷狗</span></div>
+  <div class="note">最保守。先确认这台机器能不能唤起 App，再排查参数问题。</div>
+  <a class="btn" id="b-l3b" href="#">打开酷狗首页</a>
+</div>
+
+<hr>
+
+<div class="item">
+  <div class="hd"><span class="tag safe">WEB</span><span class="name">网页版单曲页</span></div>
+  <div class="note">一定可用。作为所有失败路径的最终落点。</div>
+  <a class="btn" id="b-web" href="#">打开网页版</a>
+</div>
+
+<details class="log">
+  <summary>测试时记录什么</summary>
+  <p>1. 点 <code>L2</code>：酷狗有没有弹出来？弹出来是直接开始播，还是停在首页？</p>
+  <p>2. 点 <code>L3b</code>：如果这个都唤不起，说明包名不对或 App 没装，先解决这个。</p>
+  <p>3. 如果 <code>L3b</code> 能起但 <code>L2</code> 不能播：大概率是 hash 参数名或协议路径变了。</p>
+  <p>4. 如果都唤起了但没自动播：说明协议只做了"打开"，需要换官方 SDK 方案（要 appid）。</p>
+</details>
+
+<script>
+const HASH = "a4713521e4754b8ed3f09af1e41756e5";
+const NAME = "傅梦彤 - 潮汐";
+const MIX  = "4ltgkqde";
+const PKG  = "com.kugou.android";
+
+const payload = {cmd:212, jsonStr:{hash:HASH, filename:NAME, extname:"mp3"}};
+const l2 = "kugou://start.weixin?" + encodeURIComponent(JSON.stringify(payload));
+
+const web = "https://www.kugou.com/mixsong/" + MIX + ".html";
+const fb  = encodeURIComponent(web);
+
+const l3a = "intent://play?hash=" + HASH +
+            "#Intent;scheme=kugou;package=" + PKG +
+            ";S.browser_fallback_url=" + fb + ";end";
+const l3b = "intent://#Intent;scheme=kugou;package=" + PKG +
+            ";S.browser_fallback_url=" + fb + ";end";
+
+document.getElementById("b-l2").href  = l2;
+document.getElementById("b-l3a").href = l3a;
+document.getElementById("b-l3b").href = l3b;
+document.getElementById("b-web").href = web;
+
+document.getElementById("u-l2").textContent  = l2.slice(0, 120) + "…";
+document.getElementById("u-l3a").textContent = l3a.slice(0, 120) + "…";
+</script>
+</body>
+</html>

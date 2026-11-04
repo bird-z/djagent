@@ -1,0 +1,14 @@
+# 敏感与临时
+.workbuddy/
+.wbapp_*.genie
+.Trash-0/
+phone/.bridge_state.json
+*.log
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+
+# 系统
+.DS_Store
